@@ -53,6 +53,10 @@ latex_documents = [
      'Georg Brandl \\and someone else', 'manual'),
 ]
 
+pandoc_documents = [
+    ('contents', 'SphinxTests', 'Pandoc Author'),
+]
+
 latex_additional_files = ['svgimg.svg']
 
 texinfo_documents = [
