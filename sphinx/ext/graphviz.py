@@ -389,11 +389,24 @@ def man_visit_graphviz(self, node):
     raise nodes.SkipNode
 
 
+def pandoc_visit_graphviz(self, node):
+    try:
+        fname, outfn = render_dot(self, node['code'], node['options'], 'png')
+    except GraphvizError as exc:
+        logger.warning('dot code %r: ' % node['code'] + str(exc))
+        raise nodes.SkipNode
+    if fname is not None:
+        from sphinx.writers.pandoc import Para, Image
+        self.body.append(Para([Image(["", [], []], [], [fname, ""])]))
+    raise nodes.SkipNode
+
+
 def setup(app):
     # type: (Sphinx) -> Dict[unicode, Any]
     app.add_node(graphviz,
                  html=(html_visit_graphviz, None),
                  latex=(latex_visit_graphviz, None),
+                 pandoc=(pandoc_visit_graphviz, None),
                  texinfo=(texinfo_visit_graphviz, None),
                  text=(text_visit_graphviz, None),
                  man=(man_visit_graphviz, None))
