@@ -34,7 +34,11 @@ matrix:
       env: TOXENV=flake8
 
 install:
+  - ( cd /opt && curl -sL https://github.com/jgm/pandoc/releases/download/2.1.2/pandoc-2.1.2-linux.tar.gz | tar -xzv --strip-components=1 pandoc-2.1.2/bin )
   - pip install -U tox codecov
+
+before_script:
+  - export PATH="/opt/bin:$PATH"
 
 script:
   - tox -- -v
