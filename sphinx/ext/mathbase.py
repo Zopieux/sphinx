@@ -369,6 +369,18 @@ def texinfo_depart_displaymath(self, node):
     pass
 
 
+def pandoc_visit_math(self, node):
+    # type: (nodes.NodeVisitor, math) -> None
+    self.push_raw_tex_math(node['latex'])
+    raise nodes.SkipNode
+
+
+def pandoc_visit_displaymath(self, node):
+    # type: (nodes.NodeVisitor, math) -> None
+    self.push_raw_tex_math_block(node['latex'])
+    raise nodes.SkipNode
+
+
 def setup_math(app, htmlinlinevisitors, htmldisplayvisitors):
     # type: (Sphinx, Tuple[Callable, Any], Tuple[Callable, Any]) -> None
     app.add_config_value('math_number_all', False, 'env')
@@ -380,12 +392,14 @@ def setup_math(app, htmlinlinevisitors, htmldisplayvisitors):
                  text=(text_visit_math, None),
                  man=(man_visit_math, None),
                  texinfo=(texinfo_visit_math, None),
+                 pandoc=(pandoc_visit_math, None),
                  html=htmlinlinevisitors)
     app.add_node(displaymath,
                  latex=(latex_visit_displaymath, None),
                  text=(text_visit_displaymath, None),
                  man=(man_visit_displaymath, man_depart_displaymath),
                  texinfo=(texinfo_visit_displaymath, texinfo_depart_displaymath),
+                 pandoc=(pandoc_visit_displaymath, None),
                  html=htmldisplayvisitors)
     app.add_node(eqref, latex=(latex_visit_eqref, None))
     app.add_role('math', math_role)
