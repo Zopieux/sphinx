@@ -377,7 +377,14 @@ def pandoc_visit_math(self, node):
 
 def pandoc_visit_displaymath(self, node):
     # type: (nodes.NodeVisitor, math) -> None
-    self.push_raw_tex_math_block(node['latex'])
+
+    # Dirty hack : detect when there is a need to wrap a block into a align.
+    # TODO: call wrap_displaymath instead?
+    import re
+    eq = node['latex']
+    if re.search(r"[^\\]&", eq):
+        eq = '\\begin{align*}' + eq + '\n\\end{align*}'
+    self.push_raw_tex_math_block(eq)
     raise nodes.SkipNode
 
 
